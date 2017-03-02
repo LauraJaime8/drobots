@@ -7,17 +7,28 @@ Ice.loadSlice('drobots.ice')
 import drobots
 
 class PlayerI(drobots.Player):
-	def __init__(self, adapter):
-		self.adapter = adapter
+	def __init__(self):
+		pass
 	
-	#Funcion factoria con la que el juego le pide al jugador que cree un controlador
-	#para el robot robot
-	#def makeController(self, robot, current=None):
-	
+	def makeController(self, bot, current):
+		print("Recibo el bot {}".format(str(bot)))
+		sys.stdout.flush()
+
+		factory = current.adapter.getCommunicator().propertyToProxy("FactoryPrx")
+		# hacer casting de tipo
+		factory = drobots.FactoryPrx.uncheckedCast(factory)
 		
-		def win(self, current=None):
-	   	 print("Has ganado")
-	   	 current.adapter.getCommunicator().shutdown()
+
+		# devolver lo que devuelva la factoría
+
+		return drobots.FactoryPrx.make(bot)
+
+	def makeDetectorController(self, current):
+		pass
+	
+	def win(self, current=None):
+		print("Has ganado")
+		current.adapter.getCommunicator().shutdown()
 	
 	def lose(self, current=None):
 		print("Has perdido")
@@ -28,40 +39,32 @@ class PlayerI(drobots.Player):
 		current.adapter.getCommunicator().shutdown()
 
 
-
 class Client(Ice.Application):
 	def run(self, argv):
 		broker = self.communicator()
-		sirviente = PlayerI(adapter)
-
-		adapter=broker.createObjectAdapter("PlayerAdapter")
-		#proxy container
-		proxyC = broker.stringToProxy("container")
-		container=Services.ContainerPrx.checkedCast(proxyCon)
-		#Proxy servidor
-		proxyS=adapter.add(sirviente, broker.stringToIdentity("player1"))
 		
-		print(proxy)
-		#proxies
-
-
-		#funcion cliente
-		#proxyC=self.communicator().stringToProxy("player1 -t -e 1.1:tcp -h 192.168.1.107 -p 9090 -t 60000")
-		
-		game=drobots.PlayerPrx.uncheckedCast(proxyC)
-		if not game:
-			raise RuntimeError('invalid proxy')
-		
-		
-		return 0
-
-		sys.stdout.flush()
-
-		
+		adapter = broker.createObjectAdapter("PlayerAdapter")
 		adapter.activate()
+		sirviente = PlayerI()
+		proxy_player = adapter.add(sirviente, broker.stringToIdentity("player"))
+		proxy_player = drobots.PlayerPrx.uncheckedCast(proxy_player)
+
+		print(proxy_player)
+		sys.stdout.flush()
+		
+		proxy_game = broker.propertyToProxy("GamePrx")
+		proxy_game = drobots.GamePrx.checkedCast(proxy_game)
+		
+
+		#comprobacion		
+		if not proxy_game:
+			raise RuntimeError('Invalid proxy')
+
+		proxy_game.login(proxy_player, "Laura")
+		
 		self.shutdownOnInterrupt()
 		broker.waitForShutdown()
+		return 0
 
 
-sys.exit(Client().main(sys.argv))				
-	
+sys.exit(Client().main(sys.argv))
