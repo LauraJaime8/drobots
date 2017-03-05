@@ -13,6 +13,7 @@ class PlayerI(drobots.Player):
 	def makeController(self, bot, current):
 		print("Recibo el bot {}".format(str(bot)))
 		sys.stdout.flush()
+		robot = bot.ice_isA("::drobots::Robot")
 
 		factory = current.adapter.getCommunicator().propertyToProxy("FactoryPrx")
 		# hacer casting de tipo
@@ -56,7 +57,7 @@ class Client(Ice.Application):
 		proxy_game = drobots.GamePrx.checkedCast(proxy_game)
 		
 
-		#comprobacion		
+			
 		if not proxy_game:
 			raise RuntimeError('Invalid proxy')
 
