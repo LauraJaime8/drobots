@@ -1,7 +1,9 @@
-#include <drobots.ice>
+// -*- mode:c++ -*-
+
+#include "drobots.ice"
 
 module drobots {
-  interface FactoryAdapter {
-    Player* makeController(Robot* bot);
+  interface FactoryAdapter{
+   drobots::RobotController* make(drobots::Robot* bot);
   };
 };

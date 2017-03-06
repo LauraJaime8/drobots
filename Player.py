@@ -4,7 +4,10 @@
 import sys
 import Ice
 Ice.loadSlice('drobots.ice')
+Ice.loadSlice('FactoryAdapter.ice')
 import drobots
+
+
 
 class PlayerI(drobots.Player):
 	def __init__(self):
@@ -13,17 +16,28 @@ class PlayerI(drobots.Player):
 	def makeController(self, bot, current):
 		print("Recibo el bot {}".format(str(bot)))
 		sys.stdout.flush()
-		robot = bot.ice_isA("::drobots::Robot")
+		#robot = bot.ice_isA("::drobots::Robot")
+		broker = self.communicator()
+		
+		adapter = broker.createObjectAdapter("FactoryAdapter")
+		adapter.activate()
+		sirviente = FactoryI()
 
-		factory = current.adapter.getCommunicator().propertyToProxy("FactoryPrx")
-		# hacer casting de tipo
+		proxy_player = adapter.add(sirviente, broker.stringToIdentity("player"))
+		proxy_player = drobots.PlayerPrx.uncheckedCast(proxy_player)
+		
+		factory = adapter.add(sirviente, broker.stringToIdentity("factory1"))
 		factory = drobots.FactoryPrx.uncheckedCast(factory)
+		# hacer casting de tipo
+		#factory = drobots.FactoryPrx.uncheckedCast(factory)
+		robot = factoy.make(bot)
+		#print(factory)
 		
 
 		# devolver lo que devuelva la factoría
-
-		return drobots.FactoryPrx.make(bot)
-
+		return robot
+		#return drobots.FactoryPrx.make(bot)
+		#return drobots.FactoryPrx.checkedCast(factory)
 	def makeDetectorController(self, current):
 		pass
 	
@@ -61,7 +75,7 @@ class Client(Ice.Application):
 		if not proxy_game:
 			raise RuntimeError('Invalid proxy')
 
-		proxy_game.login(proxy_player, "Laura")
+		proxy_game.login(proxy_player, "Lauraa")
 		
 		self.shutdownOnInterrupt()
 		broker.waitForShutdown()

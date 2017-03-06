@@ -7,8 +7,6 @@ Ice.loadSlice('I. --all FactoryAdapter.ice')
 import drobots
 
 class FactoryI(drobots.Application):
-	def __init__(self, current):
-		pass
 
 	def make(self, bot, current):
 		sirviente = PlayerI(bot)
@@ -22,7 +20,7 @@ class Server(Ice.Application):
 		sirviente = FactoryI()
 
 		adapter = broker.createObjectAdapter("FactoryAdapter")
-		proxy = adapter.add(sirviente, broker.stringToIdentity("factory1"))
+		proxy = adapter.addWithUUID(sirviente)
 
 		print(proxy)
 		sys.stdout.flush()
