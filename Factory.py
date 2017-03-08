@@ -3,7 +3,7 @@
 
 import sys
 import Ice
-Ice.loadSlice('I. --all FactoryAdapter.ice')
+Ice.loadSlice('-I. --all FactoryAdapter.ice')
 import drobots
 
 class FactoryI(drobots.Application):
