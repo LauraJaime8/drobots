@@ -3,20 +3,21 @@
 
 import sys
 import Ice
-Ice.loadSlice('drobots.ice')
-Ice.loadSlice('FactoryAdapter.ice')
+Ice.loadSlice('-I. --all drobots.ice')
+Ice.loadSlice('-I. --all FactoryAdapter.ice')
 import drobots
 
+from drobots import (
+	Player)
 
 
-class PlayerI(drobots.Player):
+class PlayerI(Player):
 	def __init__(self):
 		pass
 	
 	def makeController(self, bot, current):
 		print("Recibo el bot {}".format(str(bot)))
 		sys.stdout.flush()
-		#robot = bot.ice_isA("::drobots::Robot")
 		broker = self.communicator()
 		
 		adapter = broker.createObjectAdapter("FactoryAdapter")
@@ -30,8 +31,9 @@ class PlayerI(drobots.Player):
 		factory = drobots.FactoryPrx.uncheckedCast(factory)
 		# hacer casting de tipo
 		#factory = drobots.FactoryPrx.uncheckedCast(factory)
+		print("make")
 		robot = factoy.make(bot)
-		#print(factory)
+		print(factory)
 		
 
 		# devolver lo que devuelva la factoría
