@@ -11,7 +11,7 @@ from drobots import (
 	Player)
 
 
-class PlayerI(Player):
+class PlayerI(drobots.Player):
 	def __init__(self):
 		pass
 	
