@@ -60,4 +60,9 @@ module drobots {
     Game* makeGame(string gameName, int numPlayers)
       throws InvalidName, BadNumberOfPlayers;
   };
+
+  interface Factory {
+     RobotController* make(Robot* bot, int contador);
+  };
+
 };

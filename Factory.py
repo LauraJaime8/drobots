@@ -9,6 +9,7 @@ import drobots
 class FactoryI(drobots.GameFactory):
 
 	def make(self, bot, current):
+
 		if(bot.ice_isA("::drobots::Attacker")):
 			print("Robot atacante")
 			#sirviente = PlayerI(bot)
@@ -17,6 +18,7 @@ class FactoryI(drobots.GameFactory):
 			print("Robot defensor")
 			sirviente = RobotControllerDefender(bot)
 
+		print("ES MI BOT:")
 		print(bot)
 
 
@@ -144,8 +146,9 @@ class Server(Ice.Application):
 
 		adapter = broker.createObjectAdapter("FactoryAdapter")
 		proxy = adapter.addWithUUID(sirviente)
-
+		proxy = adapter.add(sirviente, broker.stringtoProxy("factoria1"))
 		print(proxy)
+		print("EJECUTA")
 		sys.stdout.flush()
 
 		adapter.activate()

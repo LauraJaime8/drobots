@@ -26,7 +26,7 @@ class ContainerI(Services.Container):
         del self.proxies[key]
 
     def list(self, current=None):
-        return self.proxies
+        return self.proxies, list(self.proxies.keys())
     
 
 class Server(Ice.Application):
@@ -38,7 +38,7 @@ class Server(Ice.Application):
         proxy = adapter.add(servant, broker.stringToIdentity("container1"))
 
         print(proxy)
-
+        print("EJECUTA")
         adapter.activate()
         self.shutdownOnInterrupt()
         broker.waitForShutdown()

@@ -4,10 +4,9 @@
 import sys
 import Ice
 Ice.loadSlice('-I. --all drobots.ice')
-
 Ice.loadSlice('-I. --all FactoryAdapter.ice')
-Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
 
+Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
 import drobots
 import Container
 
@@ -20,18 +19,18 @@ class PlayerI(drobots.Player):
 		self.adaptador = adapter
 		self.container=sirviente
 		self.con1=sirviente2
-		self.contadorCreados = 1
-		self.contadorRobots = 1
-	
+		self.contadorCreados = 0
+		self.contadorRobots = 0
 	
 	def makeController(self, bot, current):
 		print("Recibo el bot {}".format(str(bot)))
 		sys.stdout.flush()
 		print("entra en make controller")
-	
+		
 
-		proxies, keys = self.container.list()
+		
 
+		proxies, keys= self.container.list()
 
 
 		#Problemas
@@ -50,10 +49,9 @@ class PlayerI(drobots.Player):
 	
 		
 
-		# devolver lo que devuelva la factoría
+		
 		return robot
-		#return drobots.FactoryPrx.make(bot)
-		#return drobots.FactoryPrx.checkedCast(factory)
+	
 	def makeDetectorController(self, current):
 		pass
 	
@@ -81,10 +79,6 @@ class Client(Ice.Application):
 		sirvienteContainer2 = Container.ContainerI()
 		
 		servantPlayer = PlayerI(adapterPlayer, sirvienteContainer, sirvienteContainer2)
-		print("SERVANT PLAYER")
-		print(servantPlayer)
-
-
 		
 		adapterContainer.add(sirvienteContainer, broker.stringToIdentity("Container"))
 		adapterContainer.add(sirvienteContainer2, broker.stringToIdentity("Robot"))
@@ -93,7 +87,7 @@ class Client(Ice.Application):
 		adapterPlayer.activate()
 		adapterContainer.activate()
 		
-		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("yu1"))
+		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("yup2"))
 		proxy_player = drobots.PlayerPrx.uncheckedCast(proxy_player)
 
 		print(proxy_player)
@@ -106,7 +100,7 @@ class Client(Ice.Application):
 		if not proxy_game:
 			raise RuntimeError('Invalid proxy')
 
-		proxy_game.login(proxy_player, "jugon1")
+		proxy_game.login(proxy_player, "jugon2")
 		print("se loguea")
 		
 		self.shutdownOnInterrupt()
