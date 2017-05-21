@@ -58,11 +58,6 @@ module drobots {
 
   interface GameFactory {
     Game* makeGame(string gameName, int numPlayers)
-      throws InvalidName, BadNumberOfPlayers;
+    throws InvalidName, BadNumberOfPlayers;
   };
-
-  interface Factory {
-     RobotController* make(Robot* bot, int contador);
-  };
-
 };

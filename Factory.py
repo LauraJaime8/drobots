@@ -5,13 +5,18 @@ import sys
 import Ice
 Ice.loadSlice('-I. --all FactoryAdapter.ice')
 import drobots
+import controller
 
-class FactoryI(drobots.GameFactory):
+class FactoryI(drobots.Factory):
+	def __init__(self):
+		pass
 
 	def make(self, bot, current):
+		print("Creando factorias...")
 
 		if(bot.ice_isA("::drobots::Attacker")):
 			print("Robot atacante")
+			robot_servant = RobotControllerAttacker(robot, container_robots)
 			#sirviente = PlayerI(bot)
 			sirviente = RobotControllerAttacker(bot)
 		elif (bot.ice_isA("::drobots::Defender")):
@@ -146,9 +151,10 @@ class Server(Ice.Application):
 
 		adapter = broker.createObjectAdapter("FactoryAdapter")
 		proxy = adapter.addWithUUID(sirviente)
-		proxy = adapter.add(sirviente, broker.stringtoProxy("factoria1"))
+		proxy = adapter.add(sirviente, broker.stringtoProxy("factory1"))
 		print(proxy)
 		print("EJECUTA")
+		print("EJECUTANDO FACTORIAAAAAAAAAAA")
 		sys.stdout.flush()
 
 		adapter.activate()
