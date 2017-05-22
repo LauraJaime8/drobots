@@ -1,14 +1,11 @@
 // -*- mode:c++ -*-
 
 module Services {
-  
-
- struct Point {
-    int x;
-    int y;
+  struct Point {
+    	int x;
+    	int y;
   };
 
-  exception NoEnoughEnergy{};
   exception AlreadyExists { string key; };
   exception NoSuchKey { string key; };
 
@@ -23,7 +20,7 @@ module Services {
         string getType();
   };
 
- 
+  exception NoEnoughEnergy{};
 
   interface RobotBase {
     void drive(int angle, int speed) throws NoEnoughEnergy;
@@ -33,11 +30,6 @@ module Services {
     short energy() throws NoEnoughEnergy;
   };
 
-  interface RobotController {
-    void turn();
-    void robotDestroyed();
-  };
-
   interface Attacker extends RobotBase {
     bool cannon(int angle, int distance) throws NoEnoughEnergy;
   };
@@ -45,10 +37,15 @@ module Services {
   interface Defender extends RobotBase {
     int scan(int angle, int wide) throws NoEnoughEnergy;
   };
-
+  interface RobotController {
+    void turn();
+    void robotDestroyed();
+  };
   interface Robot extends Attacker, Defender {};
+
+
 	
- interface Factory {
+  interface Factory {
      RobotController* make(Robot* bot, Container* container, int key);
   };
 };

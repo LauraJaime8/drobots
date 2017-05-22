@@ -3,9 +3,10 @@
 
 import sys
 import Ice
-Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
+#Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
+Ice.loadSlice('-I. --all container.ice')
+
 import Services
-#Ice.loadSlice('-I. --all container.ice')
 
 
 class ContainerI(Services.Container):
@@ -44,12 +45,11 @@ class Server(Ice.Application):
   def run(self, argv):
     broker = self.communicator()
     servant = ContainerI()
-#
-    adapter = broker.createObjectAdapter("ContainerAdapter")
-    proxy = adapter.add(servant, broker.stringToIdentity("container1"))
 
-   #     print(proxy)
-    #    print("EJECUTA")
+    adapter = broker.createObjectAdapter("ContainerAdapter")
+    proxy = adapter.add(servant, broker.stringToIdentity("container"))
+
+    print proxy
     adapter.activate()
     self.shutdownOnInterrupt()
     broker.waitForShutdown()

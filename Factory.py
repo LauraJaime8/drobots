@@ -3,16 +3,16 @@
 
 import sys
 import Ice
-Ice.loadSlice('-I. --all FactoryAdapter.ice')
-import drobots
-import controller
+Ice.loadSlice('-I. --all container.ice')
+import Services
 
-class FactoryI(drobots.Factory):
+
+class FactoryI(Services.Factory):
 	def __init__(self):
 		pass
 
-	def make(self, bot, current):
-		print("Creando factorias...")
+	def make(self, bot, containerRobot, contador, current=None):
+		print("Creando los tipos de robots..............................................")
 
 		if(bot.ice_isA("::drobots::Attacker")):
 			print("Robot atacante")
@@ -36,7 +36,7 @@ class FactoryI(drobots.Factory):
 
 
 
-class RobotControllerAttacker(drobots.RobotController):
+class RobotControllerAttacker(Services.RobotController):
 	def __init__(self, bot):
 		self.bot = bot
 		self.velocidad = 40
@@ -90,7 +90,7 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.estadoActual = "Moviendose"
 
 
-class RobotControllerDefender(drobots.RobotController):
+class RobotControllerDefender(Services.RobotController):
 	def __init__(self, bot):
 		self.bot = bot
 		self.energia = 100
@@ -149,12 +149,13 @@ class Server(Ice.Application):
 		broker = self.communicator()
 		sirviente = FactoryI()
 
+
 		adapter = broker.createObjectAdapter("FactoryAdapter")
-		proxy = adapter.addWithUUID(sirviente)
-		proxy = adapter.add(sirviente, broker.stringtoProxy("factory1"))
+
+		proxy = adapter.add(sirviente, broker.stringToIdentity("factory"))
+
+		
 		print(proxy)
-		print("EJECUTA")
-		print("EJECUTANDO FACTORIAAAAAAAAAAA")
 		sys.stdout.flush()
 
 		adapter.activate()
