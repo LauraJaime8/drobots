@@ -3,8 +3,9 @@
 
 import sys
 import Ice
-Ice.loadSlice('-I. --all container.ice')
+Ice.loadSlice('-I. --all interfazAdicional.ice')
 import Services
+import drobots
 
 
 class FactoryI(Services.Factory):
@@ -29,6 +30,8 @@ class FactoryI(Services.Factory):
 
 		proxy = current.adapter.addWithUUID(sirviente)
 		proxyId = proxy.ice_getIdentity()
+		print("EL ID DE MI PROXY ES:::")
+		print proxyId
 		proxyDirecto = current.adapter.createDirectProxy(proxyDirecto)
 
 		#return drobots.PlayerPrx.checkedCast(proxy)
@@ -36,7 +39,7 @@ class FactoryI(Services.Factory):
 
 
 
-class RobotControllerAttacker(Services.RobotController):
+class RobotControllerAttacker(drobots.RobotController):
 	def __init__(self, bot):
 		self.bot = bot
 		self.velocidad = 40
@@ -90,7 +93,7 @@ class RobotControllerAttacker(Services.RobotController):
 		self.estadoActual = "Moviendose"
 
 
-class RobotControllerDefender(Services.RobotController):
+class RobotControllerDefender(drobots.RobotController):
 	def __init__(self, bot):
 		self.bot = bot
 		self.energia = 100

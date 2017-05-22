@@ -4,9 +4,8 @@
 import sys
 import Ice
 Ice.loadSlice('-I. --all drobots.ice')
-Ice.loadSlice('-I. --all FactoryAdapter.ice')
 #Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
-Ice.loadSlice('-I. --all container.ice')
+Ice.loadSlice('-I. --all interfazAdicional.ice')
 
 import drobots
 
@@ -56,7 +55,7 @@ class PlayerI(drobots.Player):
 		
 		contadorF= 0
 		
-		while contadorF < 4:
+		while contadorF < 3:
 			#Crea un objeto por cada incremento de contadorFactorias
 			factory_proxy = self.broker.stringToProxy('factory -t -e 1.1:tcp -h localhost -p 900'+str(contadorF)+' -t 60000')
 			factory = Services.FactoryPrx.checkedCast(factory_proxy)
@@ -74,7 +73,7 @@ class PlayerI(drobots.Player):
 		#que lo guarda la variable factory_proxy2
 		if contadorMK == 0:
 			print("creamos robots")
-		contadorF = contadorMK % 4
+		contadorF = contadorMK % 3
 		print("CONTADOR DE FACTORIAS")
 		print contadorF
 		factory_proxy2 = containerFactorias.getElement(contadorF)
@@ -148,7 +147,7 @@ class Client(Ice.Application):
 		#adapterContainer.add(robotContainer, broker.stringToIdentity("Robots"))
 
 
-		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("hoj1"))
+		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("reo1"))
 		player = drobots.PlayerPrx.checkedCast(proxy_player)
 
 

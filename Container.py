@@ -4,8 +4,7 @@
 import sys
 import Ice
 #Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
-Ice.loadSlice('-I. --all container.ice')
-
+Ice.loadSlice('-I. --all interfazAdicional.ice')
 import Services
 
 
