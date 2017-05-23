@@ -11,6 +11,7 @@ import drobots
 
 import Services
 import Container
+import random
 
 
 
@@ -147,7 +148,7 @@ class Client(Ice.Application):
 		#adapterContainer.add(robotContainer, broker.stringToIdentity("Robots"))
 
 
-		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("reo1"))
+		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("josjo1"))
 		player = drobots.PlayerPrx.checkedCast(proxy_player)
 
 
@@ -165,7 +166,7 @@ class Client(Ice.Application):
 			raise RuntimeError('Invalid proxy')
 		
 
-		game.login(player, "toli1")
+		game.login(player, "laura11")
 
 		print("se loguea player1")
 		print("esperando conexion......")

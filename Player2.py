@@ -5,12 +5,13 @@ import sys
 import Ice
 Ice.loadSlice('-I. --all drobots.ice')
 #Ice.loadSlice('-I %s container.ice' % Ice.getSliceDir())
-#
 Ice.loadSlice('-I. --all interfazAdicional.ice')
 
 import drobots
-import Container
+
 import Services
+import Container
+import random
 
 
 
@@ -37,7 +38,7 @@ class PlayerI(drobots.Player):
 
 		
 		print("CREANDO LOS ROBOTS CONTROLLER")
-		print("CREAMOS LOS CONTENEDORES QUE GUARDARAN LAS FACTORIAS")
+		print("CREAMOS EL CONTENEDOR QUE GUARDARA LAS FACTORIAS")
 		
 		#container_proxy = self.broker.propertyToProxy("ContainerPrx")
 		container_proxy = self.broker.stringToProxy('container -t -e 1.1:tcp -h localhost -p 9190 -t 60000')
@@ -49,8 +50,6 @@ class PlayerI(drobots.Player):
 		containerFactorias.setType("ContainerFactr")
 		print("creamos las 4 factorias")
 		print("--------------------------------------------------")
-		
-		#DEvuelve None
 
 
 		#Contador factorias
@@ -62,7 +61,6 @@ class PlayerI(drobots.Player):
 			factory_proxy = self.broker.stringToProxy('factory -t -e 1.1:tcp -h localhost -p 900'+str(contadorF)+' -t 60000')
 			factory = Services.FactoryPrx.checkedCast(factory_proxy)
 			print factory
-			#Escogemos el tipo que le queremos pasar al link
 
 
 			#variable que lleva la clave
@@ -75,23 +73,21 @@ class PlayerI(drobots.Player):
 		#Devuelve el contenedor de factorias (CONTAINERFACTORIAS)
 		#que lo guarda la variable factory_proxy2
 		if contadorMK == 0:
-				print("creamos trobtoss")
+			print("creamos robots")
 		contadorF = contadorMK % 3
-		print("NUM DE FACTORIAS")
+		print("CONTADOR DE FACTORIAS")
 		print contadorF
 		factory_proxy2 = containerFactorias.getElement(contadorF)
+		#COGE EL CONTADOR
+		print("EL CONTADOR DEL PROXY ESSSSS:")
+		print factory_proxy2
 
-		
 
-
-		
-
+		#SEQUEDA AQUI
 		print("CREAMOS LOS CONTENEDORES DE LOS ROBOT CONTROLLER")
 
-		#SE QUEDA POR AQUI
-
 		containerRobot_proxy= self.broker.stringToProxy('container -t -e 1.1:tcp -h localhost -p 9190 -t 60000')
-		containerRobot = Services.ContainerPrx.checkedCast(containerRobot_proxy)
+		containerRobot = Services.ContainerPrx.checkedCast(containerRobot_proxy)			
 		containerRobot.setType("ContainerRobot")
 
 
@@ -99,9 +95,18 @@ class PlayerI(drobots.Player):
 
 		factoriaFinal = Services.FactoryPrx.checkedCast(factory_proxy2)
 		
+
+
 		print("ESTE ES EL BOT")
 		print bot
 		robots = factoriaFinal.make(bot, containerRobot, contadorMK)
+
+
+
+
+
+
+
 		contadorMK += 1
 		
 
@@ -130,14 +135,26 @@ class Client(Ice.Application):
 		broker = self.communicator()
 		
 		adapterPlayer = broker.createObjectAdapter("PlayerAdapter")
+		#adapterContainer = broker.createObjectAdapter("ContainerAdapter")
+		
+		#sirvienteContainer=Container.ContainerI()
+		#robotContainer = Container.ContainerI()
+		
 		servantPlayer = PlayerI(broker, adapterPlayer)
 
-		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("reo2"))
+
+
+		#adapterContainer.add(sirvienteContainer, broker.stringToIdentity("Container"))
+		#adapterContainer.add(robotContainer, broker.stringToIdentity("Robots"))
+
+
+		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity("jejea4"))
 		player = drobots.PlayerPrx.checkedCast(proxy_player)
 
 
 
 		adapterPlayer.activate()
+		#adapterContainer.activate()
 		
 
 		proxy_game = broker.propertyToProxy("GamePrx")
@@ -149,10 +166,12 @@ class Client(Ice.Application):
 			raise RuntimeError('Invalid proxy')
 		
 
-		game.login(player, "toli2")
+		game.login(player, "lauraj22")
 
-		print("se loguea player2")
+		print("se loguea player1")
 		print("esperando conexion......")
+
+		
 
 		
 		self.shutdownOnInterrupt()

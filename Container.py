@@ -13,8 +13,8 @@ class ContainerI(Services.Container):
         self.proxies = dict()
 
     def link(self, key, proxy, current=None):
-        if key in self.proxies:
-            raise Services.AlreadyExists(key)
+        #if key in self.proxies:
+        #    raise Services.AlreadyExists(key)
 
         print("link: {0} -> {1}".format(self.type,key, proxy))
         self.proxies[key] = proxy

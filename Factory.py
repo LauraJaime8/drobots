@@ -17,31 +17,36 @@ class FactoryI(Services.Factory):
 
 		if(bot.ice_isA("::drobots::Attacker")):
 			print("Robot atacante")
-			robot_servant = RobotControllerAttacker(robot, container_robots)
+			robot_servant = RobotControllerAttacker(bot, containerRobot)
 			#sirviente = PlayerI(bot)
-			sirviente = RobotControllerAttacker(bot)
+			#sirviente = RobotControllerAttacker(bot)
+			robot_proxy = current.adapter.addWithUUID(robot_servant)
+			containerRobot.link(contador, robot_proxy)
+			robot = drobots.RobotControllerAttackerPrx.uncheckedCast(robot_proxy)
+
+			robot.definirContainer(containerRobot)
+			print(robot)
 		elif (bot.ice_isA("::drobots::Defender")):
 			print("Robot defensor")
-			sirviente = RobotControllerDefender(bot)
 
-		print("ES MI BOT:")
-		print(bot)
+			#robot_servant = RobotController(bot, containerRobot)
+			robot_servant = RobotControllerDefender(bot, containerRobot)
+			robot_proxy = current.adapter.addWithUUID(robot_servant)
+			
+			containerRobot.link(contador, robot_proxy)
+			print containerRobot
+			robot = Services.RobotControllerAttackerPrx.uncheckedCast(robot_proxy)
+			robot.definirContainer(containerRobot)
+			#print(robot)
 
-
-		proxy = current.adapter.addWithUUID(sirviente)
-		proxyId = proxy.ice_getIdentity()
-		print("EL ID DE MI PROXY ES:::")
-		print proxyId
-		proxyDirecto = current.adapter.createDirectProxy(proxyDirecto)
-
-		#return drobots.PlayerPrx.checkedCast(proxy)
-		return bot
+		return robot
 
 
 
 class RobotControllerAttacker(drobots.RobotController):
-	def __init__(self, bot):
+	def __init__(self, bot, containerRobot):
 		self.bot = bot
+		self.containerRobot = containerRobot
 		self.velocidad = 40
 		self.estadoActual = "Moviendose"
 		self.turnos = 0
@@ -78,6 +83,8 @@ class RobotControllerAttacker(drobots.RobotController):
 			self.angulo = 0
 			self.turnos = 0
 
+	def definirContainer(self, container, current):
+		self.containerRobot = container
 
 	def robotDestroyed(self, current):
 		print("Robot destruido")
@@ -94,8 +101,9 @@ class RobotControllerAttacker(drobots.RobotController):
 
 
 class RobotControllerDefender(drobots.RobotController):
-	def __init__(self, bot):
+	def __init__(self, bot, containerRobot):
 		self.bot = bot
+		self.containerRobot = containerRobot
 		self.energia = 100
 		self.velocidad = 40
 		self.estadoActual = "Moviendose"
@@ -104,6 +112,9 @@ class RobotControllerDefender(drobots.RobotController):
 		self.coordenadas = []
 		print("Se ha creado un robot defensor")
 
+
+		def definirContainer(self, container, current):
+			self.containerRobot = container
 
 		def turn(self, current=None):
 			print("Turno del defensor")
@@ -142,6 +153,7 @@ class RobotControllerDefender(drobots.RobotController):
 				self.angulo = 0
 				self.turnos = 0
 				self.estadoActual = "Escaneando"
+
 
 
 

@@ -18,4 +18,11 @@ module Services {
   interface Factory {
      drobots::RobotController* make(drobots::Robot* bot, Container* container, int key);
   };
+
+	interface RobotControllerAttacker extends drobots::RobotController{
+		void definirContainer(Container* containerRobot);
+	};
+	interface RobotControllerDefender extends drobots::RobotController{
+		void definirContainer(Container* containerRobot);
+	};
 };
