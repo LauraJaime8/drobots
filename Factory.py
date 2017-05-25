@@ -14,19 +14,24 @@ class FactoryI(Services.Factory):
 
 	def make(self, bot, containerRobot, contador, current=None):
 		print("Creando los tipos de robots..............................................")
-
-		if(bot.ice_isA("::drobots::Attacker")):
+		
+		print("EL ROBOOOOOT ES:")
+		print (str(bot))
+		if bot.ice_isA("::drobots::Attacker"):
 			print("Robot atacante")
 			robot_servant = RobotControllerAttacker(bot, containerRobot)
+			print("sirviente del robot")
+			print(robot_servant)
+
 			#sirviente = PlayerI(bot)
 			#sirviente = RobotControllerAttacker(bot)
 			robot_proxy = current.adapter.addWithUUID(robot_servant)
 			containerRobot.link(contador, robot_proxy)
-			robot = drobots.RobotControllerAttackerPrx.uncheckedCast(robot_proxy)
+			robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
 
-			robot.definirContainer(containerRobot)
 			print(robot)
-		elif (bot.ice_isA("::drobots::Defender")):
+
+		elif bot.ice_isA("::drobots::Defender"):
 			print("Robot defensor")
 
 			#robot_servant = RobotController(bot, containerRobot)
@@ -35,9 +40,14 @@ class FactoryI(Services.Factory):
 			
 			containerRobot.link(contador, robot_proxy)
 			print containerRobot
-			robot = Services.RobotControllerAttackerPrx.uncheckedCast(robot_proxy)
-			robot.definirContainer(containerRobot)
-			#print(robot)
+			try:
+				robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
+			except Exception as e:
+				print(e)
+				raise e
+			
+		print(robot)
+
 
 		return robot
 
@@ -53,6 +63,8 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.angulo = 0
 		self.coordenadas = []
 		print("Se ha creado un robot atacante")
+		print bot
+		print containerRobot
 
 	def turn(self, current):
 		if(self.estadoActual == "Atacando"):
