@@ -15,13 +15,13 @@ class FactoryI(Services.Factory):
 	def make(self, bot, containerRobot, contador, current=None):
 		print("Creando los tipos de robots..............................................")
 		
-		print("EL ROBOOOOOT ES:")
-		print (str(bot))
+	
+
 		if bot.ice_isA("::drobots::Attacker"):
-			print("Robot atacante")
+			#print("Robot atacante")
 			robot_servant = RobotControllerAttacker(bot, containerRobot)
-			print("sirviente del robot")
-			print(robot_servant)
+			#p#rint("sirviente del robot")
+			#print(robot_servant)
 
 			#sirviente = PlayerI(bot)
 			#sirviente = RobotControllerAttacker(bot)
@@ -29,10 +29,9 @@ class FactoryI(Services.Factory):
 			containerRobot.link(contador, robot_proxy)
 			robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
 
-			print(robot)
 
 		elif bot.ice_isA("::drobots::Defender"):
-			print("Robot defensor")
+			#print("Robot defensor")
 
 			#robot_servant = RobotController(bot, containerRobot)
 			robot_servant = RobotControllerDefender(bot, containerRobot)
@@ -40,13 +39,14 @@ class FactoryI(Services.Factory):
 			
 			containerRobot.link(contador, robot_proxy)
 			print containerRobot
+			
 			try:
 				robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
 			except Exception as e:
 				print(e)
 				raise e
 			
-		print(robot)
+		#print(robot)
 
 
 		return robot
@@ -62,9 +62,8 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.turnos = 0
 		self.angulo = 0
 		self.coordenadas = []
-		print("Se ha creado un robot atacante")
+		print("Se ha creado un robot ATACANTE:")
 		print bot
-		print containerRobot
 
 	def turn(self, current):
 		if(self.estadoActual == "Atacando"):
@@ -122,15 +121,12 @@ class RobotControllerDefender(drobots.RobotController):
 		self.turnos = 0
 		self.angulo = 0
 		self.coordenadas = []
-		print("Se ha creado un robot defensor")
-
-
-		def definirContainer(self, container, current):
-			self.containerRobot = container
+		print("Se ha creado un robot DEFENSOR:")
+		print bot
 
 		def turn(self, current=None):
 			print("Turno del defensor")
-			proxy = current.adapter.getCommunicator().stringtoProxy("Container")			
+			proxy = current.adapter.getCommunicator().stringtoProxy("container")			
 			self.energia = 100
 
 			if(self.estadoActual=='Escaneando'):

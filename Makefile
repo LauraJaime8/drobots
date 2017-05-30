@@ -26,7 +26,7 @@ run-player:
 	python ./Player.py --Ice.Config=player.config
 
 run-player2:
-	 python ./Player2.py --Ice.Config=player.config
+	 python ./Player2.py --Ice.Config=player2.config
 	
 clean:
 	rm *.pyc

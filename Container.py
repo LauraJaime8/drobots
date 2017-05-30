@@ -43,12 +43,17 @@ class ContainerI(Services.Container):
 class Server(Ice.Application):
   def run(self, argv):
     broker = self.communicator()
+    
     servant = ContainerI()
+    servant2 = ContainerI()
 
     adapter = broker.createObjectAdapter("ContainerAdapter")
-    proxy = adapter.add(servant, broker.stringToIdentity("container"))
 
-    print proxy
+    proxyF = adapter.add(servant, broker.stringToIdentity("containerFactoria"))
+
+    proxyR = adapter.add(servant2, broker.stringToIdentity("containerRobot"))
+
+
     adapter.activate()
     self.shutdownOnInterrupt()
     broker.waitForShutdown()
