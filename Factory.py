@@ -4,8 +4,13 @@
 import sys
 import Ice
 Ice.loadSlice('-I. --all interfazAdicional.ice')
+Ice.loadSlice('-I. --all partida.ice')
+
 import Services
 import drobots
+import random
+import math
+import Partida
 
 
 class FactoryI(Services.Factory):
@@ -61,44 +66,74 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.estadoActual = "Moviendose"
 		self.turnos = 0
 		self.angulo = 0
+		self.energia = 0
 		self.coordenadas = []
+		self.distanciaMisil = 200 #metros
+		self.velocidadMisil = 100 #m/s
+		self.anguloLanzaMisil = 0 #de 0-359
+		self.anguloDis = 0
+		self.localizacion = 0
+		self.x = 10
+		self.y = 10
+		self.contadorDisparos = 0
 		print("Se ha creado un robot ATACANTE:")
-		print bot
+
 
 	def turn(self, current):
-		if(self.estadoActual == "Atacando"):
-			self.turnos = self.turnos+1
-			print("El robot esta disparando")
+		print("Turno del atacante")
+		self.energia = 100
+		self.localizacion = self.bot.location()
+		print("Posicion del robot:")
+		print(str(self.localizacion.x)+","+str(self.localizacion.y))
 
-			distancia = random.randint(100,620)
-			self.bot.cannon(self.angulo, distancia)
-			distancia = random.randint(100,620)
-			self.bot.cannon(self.angulo, distancia)
-			if((self.turnos==20)):
+		if(self.energia>50):
+			distancia = random.randint(1,39)*10
+			self.angulo=random.randint(0,359)
+			
+			#Dispara///////////////////////
+			if(self.contadorDisparos <= 15):
+				anguloD = self.anguloDis + random.randint(0,359)
+				distancia = random.randint(0,300)-self.localizacion.y-self.localizacion.x
+
+				if(distancia<21):
+					distancia = random.randint(21,100)
+
+				self.bot.cannon(anguloD, distancia)
+				self.contadorDisparos += 1
+				self.estadoActual = "Disparando"
+
+			else:
+				self.contadorDisparos = 0
 				self.estadoActual="Moviendose"
+			#///////////////////////////
 
-		elif(self.estadoActual=="Moviendose"):
-			print("El robot esta cambiando de rumbo")
-			xDestino = random.randint(10,990)
-			yDestino = random.randint(10,990)
+			self.energia -= 50
+		if(self.energia>60):
 
-			posicion = self.bot.location()
-			x = posicion.x
-			y = posicion.y
+			#//SE MUEVE//////////////////////
+			localizacion = self.bot.location()
+			if(self.velocidad == 0):
+				self.bot.drive(random.randint(0,360),100)
+				self.velocidad = 100
+			elif(localizacion.x > 390):
+				self.bot.drive(225, 100)
+				self.velocidad = 100
+			elif(localizacion.x < 100):
+				self.bot.drive(45, 100)
+				self.velocidad = 100
+			elif(localizacion.y > 390):
+				self.bot.drive(315, 100)
+				self.velocidad = 100
+			elif(localizacion.y < 100):
+				self.bot.drive(135, 100)
+				self.velocidad = 100
+			#////////////////////////////////
+			self.energia -= 60
 
-			distancia = int(math.sqrt((x-xDestino)**2+(y-yDestino)**2))
-			datoAngulo = math.degrees(math.atan2(xDestino-y, yDestino-x))
-			if(distancia>4):
-				self.bot.drive(datoAngulo,100)
-
-			self.angulo = 0
-			self.turnos = 0
-
-	def definirContainer(self, container, current):
-		self.containerRobot = container
 
 	def robotDestroyed(self, current):
-		print("Robot destruido")
+		print("Robot ATACANTE destruido")
+
 
 	def EnemigoDetectado(sel, angulo2, current):
 		print("Se ha detectado un enemigo")
@@ -106,7 +141,7 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.estadoActual = "Disparando"
 
 
-	def NoEnemy(self, current):
+	def NoEnemigo(self, current):
 		print("No hay enemigos")
 		self.estadoActual = "Moviendose"
 
@@ -121,49 +156,57 @@ class RobotControllerDefender(drobots.RobotController):
 		self.turnos = 0
 		self.angulo = 0
 		self.coordenadas = []
+		self.todosAngulos = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]
+		self.angulosEscaneados = self.todosAngulos[:]
+		random.shuffle(self.angulosEscaneados)
 		print("Se ha creado un robot DEFENSOR:")
-		print bot
+		#print bot
 
 		def turn(self, current=None):
 			print("Turno del defensor")
-			proxy = current.adapter.getCommunicator().stringtoProxy("container")			
 			self.energia = 100
+			self.localizacion = self.bot.location()
+			self.angulo =random.randint(0,359)
+			if(self.energia>10):
+				#//ESCANEAR
+				amplitud = 20
+				try:
+					anguloS = self.angulosEscaneados.pop()
+				except IndexError:
+					self.angulosEscaneados = self.todosAngulos[:]
+					random.shuffle(self.angulosEscaneados)
+					anguloS = self.angulosEscaneados.pop()            
+				
+				enemigosDetectados = self.bot.scan(anguloS, amplitud)
+				if enemigosDetectados <> 0:
+					self.bot.drive(0, 0)
+					self.anguloDis = anguloS
+					self.estadoActual = "Disparando"
+				#/////////////////////////
 
-			if(self.estadoActual=='Escaneando'):
-				self.turnos = turnos+1
-				robotsEnemigos = self.bot.scan(self.angulo, 15)
-				if((self.turnos==20)):
-					self.estadoActual="Moviendose"
-				elif(robotsEnemigos>0):
-					print("Se han encontrado enemigos")
-					if((self.turnos==10)):
-						self.angulo = self.angulo + 10
-					else:
-						self.angulo = self.angulo + 15
-
-				elif(robotsEnemigos==0):
-					self.angulo = self.angulo+15
-			
-			elif(self.estadoActual=='Moviendose'):
-				print("El robot cambia de rumbo")
-				xDestino = random.randint(10,990)
-				yDestino = random.randint(10,990)
-
-				posicion = self.bot.location()
-				x = posicion.x
-				y = posicion.y
-
-				distancia = int(math.sqrt((x-xDestino)**2+(y-yDestino)**2))
-				datoAngulo = math.degrees(math.atan2(xDestino-y, yDestino-x))
-				if(distancia>4):
-					self.bot.drive(datoAngulo,100)
-
-				self.angulo = 0
-				self.turnos = 0
-				self.estadoActual = "Escaneando"
+			if(self.energia>60):
+				#//MOVERSE	
+				localizacion = self.bot.location()
+			if(self.velocidad == 0):
+				self.bot.drive(random.randint(0,360),100)
+				self.velocidad = 100
+			elif(localizacion.x > 390):
+				self.bot.drive(225, 100)
+				self.velocidad = 100
+			elif(localizacion.x < 100):
+				self.bot.drive(45, 100)
+				self.velocidad = 100
+			elif(localizacion.y > 390):
+				self.bot.drive(315, 100)
+				self.velocidad = 100
+			elif(localizacion.y < 100):
+				self.bot.drive(135, 100)
+				self.velocidad = 100
+			#////////////////////////////////
 
 
-
+		def robotDestroyed(self, current):
+			print("Robot DEFENSOR destruido")
 
 
 

@@ -33,7 +33,7 @@ class PlayerI(drobots.Player):
 		#CREACION CONTAINER/////////////////////////////
 		print("CREAMOS LOS CONTENEDORES DE LOS ROBOT CONTROLLER")
 
-		containerRobot_proxy = self.broker.stringToProxy('containerRobot -t -e 1.1:tcp -h localhost -p 9190 -t 60000')
+		containerRobot_proxy = self.broker.stringToProxy('containerRobot -t -e 1.1:tcp -h localhost -p 9100 -t 60000')
 
 		containerRobot = Services.ContainerPrx.checkedCast(containerRobot_proxy)			
 		containerRobot.setType("ContainerRobotUno")
@@ -48,7 +48,8 @@ class PlayerI(drobots.Player):
 
 	def crearFactorias(self):
 		#FACTORIAS/////////////////////////////////////
-		container_proxy = self.broker.stringToProxy('containerFactoria -t -e 1.1:tcp -h localhost -p 9190 -t 60000')
+		container_proxy = self.broker.stringToProxy('containerFactoria -t -e 1.1:tcp -h localhost -p 9100 -t 60000')
+
 		
 		containerFactorias = Services.ContainerPrx.checkedCast(container_proxy)
 		#Escogemos el tipo que le queremos pasar al link
@@ -68,7 +69,7 @@ class PlayerI(drobots.Player):
 			containerFactorias.link(contadorF, factory_proxy)
 			contadorF += 1
 		print ("contenedor factorias")
-		print contenedorFactorias
+		print containerFactorias
 		return containerFactorias
 
 		#	fin creacion de factorias/////////////////////////////////
@@ -86,8 +87,8 @@ class PlayerI(drobots.Player):
 		
 
 		print contadorF
-		if self.contadorMK == 3:
-			import pdb; pdb.set_trace()
+		#if self.contadorMK == 3:
+		#	import pdb; pdb.set_trace()
 
 		factory_proxy2 = self.contenedorFactorias.getElement(contadorF)
 		#COGE EL CONTADOR
@@ -153,7 +154,7 @@ class Client(Ice.Application):
 			raise RuntimeError('Invalid proxy')
 		
 
-		game.login(player, "Yogador1")
+		game.login(player, "Laura1")
 
 		print("se loguea player1")
 		print("esperando conexion......")

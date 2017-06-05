@@ -45,8 +45,12 @@ class Server(Ice.Application):
     broker = self.communicator()
     
     servant = ContainerI()
+
     servant2 = ContainerI()
 
+
+    print servant
+    print servant2
     adapter = broker.createObjectAdapter("ContainerAdapter")
 
     proxyF = adapter.add(servant, broker.stringToIdentity("containerFactoria"))
