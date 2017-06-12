@@ -76,7 +76,7 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.x = 10
 		self.y = 10
 		self.contadorDisparos = 0
-		self.daño=0
+		self.danio=0
 		print("Se ha creado un robot ATACANTE:")
 
 
@@ -95,15 +95,15 @@ class RobotControllerAttacker(drobots.RobotController):
 			if(self.contadorDisparos <= 15):
 				anguloD = self.anguloDis + random.randint(0,359)
 				distancia = random.randint(0,300)-self.localizacion.y-self.localizacion.x
-				
+
 				if(distancia<21):
 					distancia = random.randint(21,100)
 
-					self.bot.cannon(anguloD, distancia)
-					print("Se ha disparado hacia" +str(anguloD) +" a una distancia de " + str(distancia))
-				
-					self.contadorDisparos += 1
-					self.estadoActual = "Disparando"
+				self.bot.cannon(anguloD, distancia)
+				print("Se ha disparado hacia" +str(anguloD) +" a una distancia de " + str(distancia))
+			
+				self.contadorDisparos += 1
+				self.estadoActual = "Disparando"
 
 			else:
 				self.contadorDisparos = 0
