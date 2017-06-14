@@ -1,9 +1,10 @@
-
+#include "drobots.ice"
 
 module Partida {
 
   interface Coordinacion {
-	void EnemigoDetectado(int angulo);
-	void NoEnemigos();
+	void EnemigoDetectado(int x, int y);
+	void MiPosicion(int x, int y);
+	
   };
 };

@@ -154,7 +154,7 @@ class Client(Ice.Application):
 			raise RuntimeError('Invalid proxy')
 		
 
-		game.login(player, "Laura1")
+		game.login(player, "Lauri1")
 
 		print("se loguea player1")
 		print("esperando conexion......")
