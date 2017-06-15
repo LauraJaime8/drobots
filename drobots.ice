@@ -30,7 +30,7 @@ module drobots {
   interface RobotController {
     void turn();
     void robotDestroyed();
-    void posicionAmigos(Point point, int id);
+    void posicionAmigosPrint(Point point, int id);
   };
 
   interface DetectorController {

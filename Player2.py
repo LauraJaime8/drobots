@@ -156,8 +156,8 @@ class Client(Ice.Application):
 
 		game.login(player, "Lauri2")
 
-		print("se loguea player1")
-		print("esperando conexion......")
+		print("Se ha logueado el Jugador2.")
+		print("Esperando conexion...")
 
 		
 
