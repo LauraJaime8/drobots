@@ -5,8 +5,8 @@
 all:
 	gnome-terminal -e "make run-factorias"
 	gnome-terminal -e "make run-container"
-	gnome-terminal -e "make run-player2"
 	gnome-terminal -e "make run-player"
+
 run-factorias:
 	make -j run-factory1 run-factory2 run-factory3
 

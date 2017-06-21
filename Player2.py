@@ -36,8 +36,8 @@ class PlayerI(drobots.Player):
 		containerRobot_proxy = self.broker.stringToProxy('containerRobot -t -e 1.1:tcp -h localhost -p 9100 -t 60000')
 
 		containerRobot = Services.ContainerPrx.checkedCast(containerRobot_proxy)			
-		containerRobot.setType("ContainerRobotUno")
-		print ("contenedor de robot")
+		containerRobot.setType("ContainerRobotDos")
+		print ("contenedor de robot del player 2")
 		print containerRobot
 		#////////////////////////////////////////
 
@@ -53,11 +53,11 @@ class PlayerI(drobots.Player):
 		
 		containerFactorias = Services.ContainerPrx.checkedCast(container_proxy)
 		#Escogemos el tipo que le queremos pasar al link
-		containerFactorias.setType("ContainerFactoryUno")
+		containerFactorias.setType("ContainerFactoryDos")
 		print("creamos las 3 factorias")
 		print("--------------------------------------------------")
 		#Contador factorias
-		#Creador de factorias hasta 4
+	
 		contadorF= 0
 		
 		while contadorF < 3:
@@ -104,11 +104,11 @@ class PlayerI(drobots.Player):
 		pass
 	
 	def win(self, current=None):
-		print("Has ganado")
+		print("El jugador 2 ha ganado :)")
 		current.adapter.getCommunicator().shutdown()
 	
 	def lose(self, current=None):
-		print("Has perdido")
+		print("El jugador 2 ha perdido :(")
 		current.adapter.getCommunicator().shutdown()
 
 	def gameAbort(self, current=None):
@@ -122,28 +122,15 @@ class Client(Ice.Application):
 		broker = self.communicator()
 		
 		adapterPlayer = broker.createObjectAdapter("PlayerAdapter")
-		#adapterContainer = broker.createObjectAdapter("ContainerAdapter")
-		
-		#sirvienteContainer=Container.ContainerI()
-		#robotContainer = Container.ContainerI()
+	
 		
 		adapterPlayer.activate()
 		servantPlayer = PlayerI(broker, adapterPlayer)
 
 
-
-		#adapterContainer.add(sirvienteContainer, broker.stringToIdentity("Container"))
-		#adapterContainer.add(robotContainer, broker.stringToIdentity("Robots"))
-
-
 		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity(str(os.getpid())))
 		player = drobots.PlayerPrx.checkedCast(proxy_player)
 
-
-
-		#adapterPlayer.activate()
-		#adapterContainer.activate()
-		
 
 		proxy_game = broker.propertyToProxy("GamePrx")
 		game = drobots.GamePrx.checkedCast(proxy_game)

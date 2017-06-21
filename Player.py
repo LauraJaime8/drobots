@@ -25,10 +25,7 @@ class PlayerI(drobots.Player):
 		self.contenedorFactorias = self.crearFactorias()
 		self.contenedorRobots = self.crearRobots()
 		
-	
-	
-
-	
+		
 	def crearRobots(self):
 		#CREACION CONTAINER/////////////////////////////
 		print("CREAMOS LOS CONTENEDORES DE LOS ROBOT CONTROLLER")
@@ -37,7 +34,7 @@ class PlayerI(drobots.Player):
 
 		containerRobot = Services.ContainerPrx.checkedCast(containerRobot_proxy)			
 		containerRobot.setType("ContainerRobotUno")
-		print ("contenedor de robot")
+		print ("contenedor de robot del player 1")
 		print containerRobot
 		#////////////////////////////////////////
 
@@ -57,7 +54,6 @@ class PlayerI(drobots.Player):
 		print("creamos las 3 factorias")
 		print("--------------------------------------------------")
 		#Contador factorias
-		#Creador de factorias hasta 4
 		contadorF= 0
 		
 		while contadorF < 3:
@@ -75,6 +71,8 @@ class PlayerI(drobots.Player):
 		#	fin creacion de factorias/////////////////////////////////
 
 	def makeController(self, bot, current=None):
+		print('Robot creado: %s' % bot)
+
 		#contadorF = 0
 		#	creamos los robot controller
 		if self.contadorMK == 0:
@@ -84,8 +82,6 @@ class PlayerI(drobots.Player):
 		contadorF= self.contadorMK % 3
 
 		print("veces que entra en makecontroller")
-		
-
 		print contadorF
 		#if self.contadorMK == 3:
 		#	import pdb; pdb.set_trace()
@@ -100,15 +96,12 @@ class PlayerI(drobots.Player):
 		self.contadorMK += 1
 		return robots
 
-	def makeDetectorController(self, current):
-		pass
-	
 	def win(self, current=None):
-		print("Has ganado")
+		print("El jugador 1 ha ganado :D")
 		current.adapter.getCommunicator().shutdown()
 	
 	def lose(self, current=None):
-		print("Has perdido")
+		print("El jugador 1 ha perdido :(")
 		current.adapter.getCommunicator().shutdown()
 
 	def gameAbort(self, current=None):
@@ -122,28 +115,14 @@ class Client(Ice.Application):
 		broker = self.communicator()
 		
 		adapterPlayer = broker.createObjectAdapter("PlayerAdapter")
-		#adapterContainer = broker.createObjectAdapter("ContainerAdapter")
-		
-		#sirvienteContainer=Container.ContainerI()
-		#robotContainer = Container.ContainerI()
+	
 		
 		adapterPlayer.activate()
 		servantPlayer = PlayerI(broker, adapterPlayer)
 
-
-
-		#adapterContainer.add(sirvienteContainer, broker.stringToIdentity("Container"))
-		#adapterContainer.add(robotContainer, broker.stringToIdentity("Robots"))
-
-
 		proxy_player = adapterPlayer.add(servantPlayer, broker.stringToIdentity(str(os.getpid())))
 		player = drobots.PlayerPrx.checkedCast(proxy_player)
 
-
-
-		#adapterPlayer.activate()
-		#adapterContainer.activate()
-		
 
 		proxy_game = broker.propertyToProxy("GamePrx")
 		game = drobots.GamePrx.checkedCast(proxy_game)
@@ -159,9 +138,6 @@ class Client(Ice.Application):
 		print("Se han logueado el Jugador1.")
 		print("Esperando conexion...")
 
-		
-
-		
 		self.shutdownOnInterrupt()
 		broker.waitForShutdown()
 		return 0
