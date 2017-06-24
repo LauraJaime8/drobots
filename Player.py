@@ -90,7 +90,6 @@ class PlayerI(drobots.Player):
 		#COGE EL CONTADOR
 		
 		factoriaFinal = Services.FactoryPrx.checkedCast(factory_proxy2)
-		#Tiene que hacer 3 veces esto!!!!
 		robots = factoriaFinal.make(bot, self.contenedorRobots, self.contadorMK)
 			
 		self.contadorMK += 1

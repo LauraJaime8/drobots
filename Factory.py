@@ -19,13 +19,13 @@ class FactoryI(Services.Factory):
 
 	def make(self, bot, containerRobot, contador, current=None):
 		if bot.ice_isA("::drobots::Attacker"):
-			robot_servant = RobotControllerAttacker(bot, containerRobot)
+			robot_servant = RobotControllerAttacker(bot, containerRobot, contador)
 			robot_proxy = current.adapter.addWithUUID(robot_servant)
 			containerRobot.link(contador, robot_proxy)
 			robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
 
-		else:
-			robot_servant = RobotControllerDefender(bot, containerRobot)
+		elif(bot.ice_isA("::drobots::Defender")):
+			robot_servant = RobotControllerDefender(bot, containerRobot, contador)
 			robot_proxy = current.adapter.addWithUUID(robot_servant)
 			containerRobot.link(contador, robot_proxy)
 			robot = drobots.RobotControllerPrx.checkedCast(robot_proxy)
@@ -34,8 +34,8 @@ class FactoryI(Services.Factory):
 
 
 
-class RobotControllerDefender(drobots.RobotController):
-	def __init__(self, bot, containerRobot):
+class RobotControllerDefender(drobots.RobotController, Partida.Coordinacion):
+	def __init__(self, bot, containerRobot, contador):
 		self.bot = bot
 		self.containerRobot = containerRobot
 		self.energia = 100
@@ -52,88 +52,89 @@ class RobotControllerDefender(drobots.RobotController):
 		self.todosAngulos = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]
 		self.angulosEscaneados = self.todosAngulos[:]
 		random.shuffle(self.angulosEscaneados)
+		self.id = contador
 
 		print("Se ha creado un robot DEFENSOR")
-		print("Esperando por el turno(defensor)....")
 
-		def turn(self, current=None):
-			print("Turno del DEFENSOR")
-			turno += 1
-			self.energia = 100
-			localizacion = self.bot.location() #punto
-			self.angulo =random.randint(0,359)
+	def turn(self, current=None):
+		print("Turno del DEFENSOR")
+		print(self.id)
+		self.turno += 1
+		self.energia = 100
+		localizacion = self.bot.location() #punto
+		self.angulo =random.randint(0,359)
 
-			if(self.energia>10):
-				self.escanear()
-			if(self.energia>60):
-				self.moverse(localizacion)
+		if(self.energia>10):
+			self.escanear()
+		if(self.energia>60):
+			self.moverse(localizacion)
 			
 
-			#DEVOLVER MI POSICION EN EL MAPA
-			self.MiPosicion()
-			self.posicionAmigosPrint(self.localizacion,contadorAtacantes)
-			print("Turno: " + str(self.turno))
-			print("Daño: " + str(self.damage))
+		#DEVOLVER MI POSICION EN EL MAPA
+		self.MiPosicion()
+		self.posicionAmigosPrint(localizacion,contadorAtacantes)
+		print("Turno: " + str(self.turno))
+		print("Daño: " + str(self.damage))
 		
 		
 
-		def moverse(self, localizacion):
-			#//MOVERSE	
-			localizacion = self.bot.location()
-			if(self.velocidad == 0):
-				self.bot.drive(random.randint(0,360),100)
-				self.velocidad = 100
-			elif(localizacion.x > 390):
-				self.bot.drive(225, 100)
-				self.velocidad = 100
-			elif(localizacion.x < 100):
-				self.bot.drive(45, 100)
-				self.velocidad = 100
-			elif(localizacion.y > 390):
-				self.bot.drive(315, 100)
-				self.velocidad = 100
-			elif(localizacion.y < 100):
-				self.bot.drive(135, 100)
-				self.velocidad = 100
-			#////////////////////////////////
+	def moverse(self, localizacion):
+		#//MOVERSE	
+		localizacion = self.bot.location()
+		if(self.velocidad == 0):
+			self.bot.drive(random.randint(0,360),100)
+			self.velocidad = 100
+		elif(localizacion.x > 390):
+			self.bot.drive(225, 100)
+			self.velocidad = 100
+		elif(localizacion.x < 100):
+			self.bot.drive(45, 100)
+			self.velocidad = 100
+		elif(localizacion.y > 390):
+			self.bot.drive(315, 100)
+			self.velocidad = 100
+		elif(localizacion.y < 100):
+			self.bot.drive(135, 100)
+			self.velocidad = 100
+		#////////////////////////////////
 
-		def escanear(self):
-			#//ESCANEAR
-			amplitud = 20
-			try:
-				anguloS = self.angulosEscaneados.pop()
-			except IndexError:
-				self.angulosEscaneados = self.todosAngulos[:]
-				random.shuffle(self.angulosEscaneados)
-				anguloS = self.angulosEscaneados.pop()            
+	def escanear(self):
+		#//ESCANEAR
+		amplitud = 20
+		try:
+			anguloS = self.angulosEscaneados.pop()
+		except IndexError:
+			self.angulosEscaneados = self.todosAngulos[:]
+			random.shuffle(self.angulosEscaneados)
+			anguloS = self.angulosEscaneados.pop()            
 				
-			enemigosDetectados = self.bot.scan(anguloS, amplitud)
-			if enemigosDetectados <> 0:
-				self.bot.drive(0, 0)
-				self.anguloDisparo = anguloS
-				self.estadoActual = "Disparando"
-			#/////////////////////////
+		enemigosDetectados = self.bot.scan(anguloS, amplitud)
+		if enemigosDetectados <> 0:
+			self.bot.drive(0, 0)
+			self.anguloDisparo = anguloS
+			self.estadoActual = "Disparando"
+		#/////////////////////////
 
 
-		def robotDestroyed(self, current):
-			print("Robot DEFENSOR destruido")
+	def robotDestroyed(self, current):
+		print("Robot DEFENSOR destruido")
 
-		def posicionAmigosPrint(self, point, identificador, current=None):
-			self.posicionAmigos[identificador] = point
-			print("El atacante " + str(identificador)+ " tiene la posicion: " +str(point.x)+ ' ' + str(point.y))
+	def posicionAmigosPrint(self, point, identificador, current=None):
+		self.posicionAmigos[identificador] = point
+		print("El atacante " + str(identificador)+ " tiene la posicion: " +str(point.x)+ ' ' + str(point.y))
 
 
-		def MiPosicion(self):
-			miLocalizacion = self.bot.location()
-			print("Mi posicion es:")
-			print(miLocalizacion)
+	def MiPosicion(self):
+		miLocalizacion = self.bot.location()
+		print("Mi posicion es:")
+		print(miLocalizacion)
 	
 
 
 
 
-class RobotControllerAttacker(drobots.RobotController):
-	def __init__(self, bot, containerRobot):
+class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
+	def __init__(self, bot, containerRobot, contador):
 		self.bot = bot
 
 		self.containerRobot = containerRobot
@@ -149,16 +150,16 @@ class RobotControllerAttacker(drobots.RobotController):
 		self.y = 10
 		self.contadorDisparos = 0
 		self.damage=0
+		self.id = contador
 
 		print("Se ha creado un robot ATACANTE")
-		print("Esperando por el turno(atacante)....")
 
 
 
 	def turn(self, current):
 		try:		
 			contadorDefensores = 0
-		
+			print(self.id)
 			print("Turno del atacante")
 			self.turno += 1
 			self.energia = 100
