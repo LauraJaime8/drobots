@@ -41,13 +41,11 @@ class RobotControllerDefender(drobots.RobotController, Partida.Coordinacion):
 		self.energia = 100
 		self.velocidad = 40
 		self.estadoActual = "Moviendose"
-		self.posicionAmigos = dict()
 		self.turnos = 0
 		self.x = 290
 		self.y = 290
 		self.amplitud=20
 		self.turno = 0
-		self.coordenadas = []
 		self.todosAngulos = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340]
 		self.angulosEscaneados = self.todosAngulos[:]
 		random.shuffle(self.angulosEscaneados)
@@ -73,17 +71,14 @@ class RobotControllerDefender(drobots.RobotController, Partida.Coordinacion):
 
 		#DEVOLVER TODA LA INFORMACION
 		self.MiPosicion()
-		#self.posicion()
 		print("Turno número: " + str(self.turno))
-		print("Daño del defensor: " + str(self.bot.damage()))
+		print("Tengo un daño de: " + str(self.bot.damage()))
 
 		
 
 		
-
 
 	def moverse(self, localizacion):
-		#//MOVERSE	
 		localizacion = self.bot.location()
 		if(self.velocidad == 0):
 			self.bot.drive(random.randint(0,360),100)
@@ -100,7 +95,7 @@ class RobotControllerDefender(drobots.RobotController, Partida.Coordinacion):
 		elif(localizacion.y < 100):
 			self.bot.drive(135, 100)
 			self.velocidad = 100
-		#////////////////////////////////
+
 
 	def escanear(self):
 		amplitud = 20
@@ -116,35 +111,23 @@ class RobotControllerDefender(drobots.RobotController, Partida.Coordinacion):
 			self.bot.drive(0, 0)
 			self.anguloDisparo = anguloS
 			self.estadoActual = "Disparando"
-		#/////////////////////////
 
 
 	def robotDestroyed(self, current):
 		print("Robot DEFENSOR destruido")
 
 
-
-	#def posicion(self):
-	#	for i in [0,1,2,3]:
-	#		proxyAtacante = self.containerRobot.getElement(i)
-	#		atacante = drobots.RobotControllerPrx.uncheckedCast(proxyAtacante)
-	#		print atacante
-	#		print self.bot
-	#		location = self.bot.location()
-	#		loc = atacante.location()
-	#		
-	#		atacante.posicionAmigosPrint(location, i)
-
-
-	#def posicionAmigosPrint(self, point, identificador, current=None):
-		
-	#	self.posicionAmigos[identificador] = point
-	#	print("El atacante " + str(identificador)+ " tiene la posicion: " +str(point.x)+ ' ' + str(point.y))
-
-
 	def MiPosicion(self):
 		miLocalizacion = self.bot.location()
 		print("Mi posicion es:" + str(miLocalizacion))
+
+
+
+
+
+
+
+
 
 
 class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
@@ -165,7 +148,6 @@ class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
 		self.contadorDisparos = 0
 		self.damage=0
 		self.id = contador
-
 		print("Se ha creado un robot ATACANTE")
 
 
@@ -178,10 +160,8 @@ class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
 			print("-------------------------------------")
 			self.turno += 1
 			self.energia = 100
-			self.localizacion = self.bot.location() #Coordenadas
-			#print("Posicion del robot:")
-			#print(str(self.localizacion.x)+","+str(self.localizacion.y)
-
+			self.localizacion = self.bot.location()
+			
 
 			if(self.energia>50):
 				distancia = random.randint(1,39)*10
@@ -204,8 +184,8 @@ class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
 		#TODA LA INFORMACION DEL TURNO
 		self.MiPosicion()
 		self.posicionAmigosPrint(self.localizacion,contadorDefensores)
-		print("Turno: " + str(self.turno))
-		print("Daño: " + str(self.damage))
+		print("Turno número: " + str(self.turno))
+		print("Tengo un daño de: " + str(self.damage))
 
 
 
@@ -254,16 +234,6 @@ class RobotControllerAttacker(drobots.RobotController, Partida.Coordinacion):
 		self.posicionAmigos[identificador] = point
 		print("El defensor " + str(identificador)+ " tiene la posicion: " + str(point.x)+ ',' + str(point.y))
 
-
-
-	def EnemigoDetectado(sel, x,y, current):
-		print("Se ha detectado un enemigo")
-		Point=[]
-		Point.append(x)
-		Point.append(y)
-		self.posicionEnemigos.append(Point)
-		print("El enemigo esta en el punto:")
-		print(x,y)
 
 	def MiPosicion(self):
 		miLocalizacion = self.bot.location()
